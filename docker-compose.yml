@@ -1,12 +1,12 @@
 version: '3.5'
 
 services:
-  laravel-app:
+  giphy-app:
     build:
       context: '.'
       args:
         uid: ${UID}
-    container_name: app
+    container_name: giphy-app
     environment:
       - APACHE_RUN_USER=devuser
       - APACHE_RUN_GROUP=devuser
@@ -19,11 +19,11 @@ services:
     networks:
       backend:
         aliases:
-          - app
+          - giphy-app
 
   mysql-db:
     image: mysql:8
-    container_name: db
+    container_name: giphy-app-db
     volumes:
       - ./run/var:/var/lib/mysql
     ports:
@@ -36,7 +36,7 @@ services:
     networks:
       backend:
         aliases:
-          - db
+          - giphy-app-db
 networks:
   backend:
-    name: laravel-network
+    name: giphy-network

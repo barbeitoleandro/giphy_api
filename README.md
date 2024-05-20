@@ -1,6 +1,6 @@
 # Project Name
 
-Tournament App
+Giphy API
 
 ----------
 
