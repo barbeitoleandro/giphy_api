@@ -7,10 +7,12 @@ use App\Http\Requests\SaveRequest;
 use App\Http\Requests\SearchByIdRequest;
 use App\Http\Requests\SearchByNameRequest;
 use App\Http\Resources\GifsResource;
+use App\Models\Audit;
 use App\Models\FavoriteGif;
 use App\Models\Gif;
 use Illuminate\Http\Request;
 use GuzzleHttp\Client;
+use Illuminate\Support\Facades\Auth;
 
 class GifController extends Controller
 {
@@ -23,11 +25,28 @@ class GifController extends Controller
 
         $gifs = GiphyHelper::searchByName($q, $limit, $offset);
         if (!$gifs) {
-            return response()->json([
+            $response_code = 404;
+            $response_body = [
                 'message' => 'Gifs not found'
-            ], 404);
+            ];
+
+            return $this->responseFunction(
+                $response_code,
+                $response_body,
+                $request
+            );
         }
-        return response()->json(GifsResource::collection($gifs));
+
+        $response_code = 200;
+        $response_body = GifsResource::collection($gifs);
+
+        return $this->responseFunction(
+            $response_code,
+            $response_body,
+            $request
+        );
+
+
     }
 
     public function searchById(SearchByIdRequest $request)
@@ -35,26 +54,56 @@ class GifController extends Controller
         $id = $request->input('id');
         $gifs = GiphyHelper::searchById($id);
         if (!$gifs) {
-            return response()->json([
+            $response_code = 404;
+            $response_body = [
                 'message' => 'Gif not found'
-            ], 404);
+            ];
+
+            return $this->responseFunction(
+                $response_code,
+                $response_body,
+                $request
+            );
         }
-        return response()->json(new GifsResource($gifs));
+
+
+        $response_code = 200;
+        $response_body = new GifsResource($gifs);
+
+        return $this->responseFunction(
+            $response_code,
+            $response_body,
+            $request
+        );
     }
 
     public function save(SaveRequest $request)
     {
         $giphy = GiphyHelper::searchById($request->input('gif_id'));
         if (!$giphy) {
-            return response()->json([
+            $response_code = 404;
+            $response_body = [
                 'message' => 'Gif not found'
-            ], 404);
+            ];
+
+            return $this->responseFunction(
+                $response_code,
+                $response_body,
+                $request
+            );
         }
         $gif = Gif::createFromGiphy($giphy);
         if (!$gif) {
-            return response()->json([
+            $response_code = 500;
+            $response_body = [
                 'message' => 'Error saving gif'
-            ], 500);
+            ];
+
+            return $this->responseFunction(
+                $response_code,
+                $response_body,
+                $request
+            );
         }
 
         $favoriteGif = FavoriteGif::create(
@@ -64,14 +113,43 @@ class GifController extends Controller
         );
 
         if (!$favoriteGif) {
-            return response()->json([
-                'message' => 'Error saving gif'
-            ], 500);
+            $response_code = 500;
+            $response_body = [
+                'message' => 'Error saving favorite gif'
+            ];
+
+            return $this->responseFunction(
+                $response_code,
+                $response_body,
+                $request
+            );
         }
 
-        return response()->json([
-            'message' => 'Gif saved successfully',
-        ], 201);
+        $response_code = 200;
+        $response_body = [
+            'message' => 'Gif saved successfully'
+        ];
+
+        return $this->responseFunction(
+            $response_code,
+            $response_body,
+            $request
+        );
     }
+
+    public function responseFunction($response_code, $response_body, $request){
+
+        Audit::create(
+            $request->url(),
+            $request->getContent(),
+            $response_code,
+            $response_body,
+            $request->ip()
+        );
+
+        return response()->json($response_body, $response_code);
+
+    }
+
 
 }
