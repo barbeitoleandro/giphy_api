@@ -3,9 +3,11 @@
 Giphy API
 
 ----------
-
 # Getting started
 
+You can found the Postman Collection and the documentation in this shared folder:
+
+https://drive.google.com/drive/folders/1BYfXyGk8wEgjG-UHhCe2L6jVybliiAAz?usp=sharing
 
 
 ## Installation
@@ -29,3 +31,5 @@ Generate a new application key
 Run the database migration (**Set the database connection in .env before migrating**)
 
     docker exec giphy-app php artisan migrate
+
+
