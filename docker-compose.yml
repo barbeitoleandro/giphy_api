@@ -36,7 +36,7 @@ services:
     networks:
       backend:
         aliases:
-          - giphy-app-db
+          - giphy-app- db
 networks:
   backend:
     name: giphy-network
