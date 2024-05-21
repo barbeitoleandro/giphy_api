@@ -20,12 +20,12 @@ Build & run docker-composer images (**Verify you have already shared volumes fol
 
 Install all the dependencies using composer
 
-    docker exec app composer install
+    docker exec giphy-app composer install
 
 Generate a new application key
 
-    docker exec app php artisan key:generate
+    docker exec giphy-app php artisan key:generate
 
 Run the database migration (**Set the database connection in .env before migrating**)
 
-    docker exec app php artisan migrate
+    docker exec giphy-app php artisan migrate
