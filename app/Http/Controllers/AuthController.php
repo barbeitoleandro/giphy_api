@@ -26,21 +26,6 @@ class AuthController extends Controller
         ]);
     }
 
-    /**
-     * Refresh a token.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function refresh(Request $request){
-        $user = User::find(session('auth_user')->id);
-
-        $token = $this->token($user);
-        return response()->json([
-            'access_token' => $token,
-            'token_type' => 'bearer',
-            'expires_in' => time() + env('JWT_EXPIRATION_TIME', 1800)
-        ]);
-    }
 
     public function token($user)
     {
