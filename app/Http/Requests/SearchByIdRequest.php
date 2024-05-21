@@ -6,7 +6,7 @@ use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
-class LoginRequest extends FormRequest
+class SearchByIdRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -23,14 +23,13 @@ class LoginRequest extends FormRequest
      *
      * @return array
      */
-
     public function rules()
     {
         return [
-            'email'=>'required',
-            'password'=>'required'
+            'id'=>'required|string',
         ];
     }
+
 
     public function response(array $errors)
     {
